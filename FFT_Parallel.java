@@ -8,7 +8,7 @@ import java.util.concurrent.Future;
 
 class FFT_Parallel implements Callable<Complex[]> {
 
-    public static ExecutorService threadPool = Executors.newCachedThreadPool();
+    public static ExecutorService threadPool;
 
     Complex[] x;
     int N;
@@ -28,6 +28,7 @@ class FFT_Parallel implements Callable<Complex[]> {
         for(int k = 0; k < N/2; k++) {
             even[k] = x[2*k];
         }
+        
         Future<Complex[]> evenF = threadPool.submit(new FFT_Parallel(even));
         for(int k = 0; k < N/2; k++) {
             odd[k] = x[2*k + 1];
