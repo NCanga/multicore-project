@@ -65,6 +65,5 @@ if __name__ == '__main__':
     f = fft(x)
     #print(timeit.default_timer() - start_time)
     #start_time = timeit.default_timer()
-    pf = parallel_fft(x)
     #print(timeit.default_timer() - start_time)
-    print(np.allclose(f, pf))
+    print(f)
