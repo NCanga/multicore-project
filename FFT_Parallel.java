@@ -6,6 +6,7 @@ import java.util.concurrent.Future;
 class FFT_Parallel implements Callable<Complex[]> {
 
     public static ExecutorService threadPool;
+    public static int sequentialN;
 
     Complex[] x;
     int N;
@@ -35,7 +36,7 @@ class FFT_Parallel implements Callable<Complex[]> {
         Future<Complex[]> evenF;
         Future<Complex[]> oddF;
 
-        if(N > Math.pow(2, 20)){
+        if(N > Math.pow(2, sequentialN)){
             evenF = threadPool.submit(new FFT_Parallel(even));
             oddF = threadPool.submit(new FFT_Parallel(odd));
             q = evenF.get();

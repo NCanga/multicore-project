@@ -6,7 +6,7 @@ import java.util.concurrent.Future;
 class FFT_Test {
     public static void main(String[] args) throws Exception{
         Random ran = new Random();
-        int n = (int) Math.pow(2, 25);
+        int n = (int) Math.pow(2, 18);
         Complex[] input = new Complex[n];
         for (int i = 0; i < n; i++) {
             input[i] = new Complex(i, 0);
@@ -15,9 +15,11 @@ class FFT_Test {
 
         ExecutorService es = Executors.newSingleThreadExecutor();
         FFT_Parallel.threadPool = Executors.newCachedThreadPool();
+        FFT_Parallel.sequentialN = 15;
         Future<Complex[]> parallel_output_f = es.submit(new FFT_Parallel(input));
         long startTime = System.currentTimeMillis();
         Complex[] parallel_output = parallel_output_f.get();
+        parallel_output = null;
         long endTime = System.currentTimeMillis();
         System.out.println("Total parallel execution time: " + (endTime - startTime));
         es.shutdown();
