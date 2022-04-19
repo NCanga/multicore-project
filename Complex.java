@@ -8,6 +8,10 @@ public class Complex {
         im = imag;
     }
 
+    public double abs() {
+        return Math.hypot(re, im);
+    }
+
     // return a string representation of the invoking Complex object
     public String toString() {
         if (im == 0) return re + "";
@@ -49,5 +53,12 @@ public class Complex {
         double imag = a.im + b.im;
         Complex sum = new Complex(real, imag);
         return sum;
+    }
+    
+    public boolean equals(Object x) {
+        if (x == null) return false;
+        if (this.getClass() != x.getClass()) return false;
+        Complex that = (Complex) x;
+        return (this.re == that.re) && (this.im == that.im);
     }
 }

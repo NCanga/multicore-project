@@ -6,7 +6,7 @@ import java.util.concurrent.Future;
 class FFT_Test {
     public static void main(String[] args) throws Exception{
         Random ran = new Random();
-        int n = (int) Math.pow(2, 20);
+        int n = (int) Math.pow(2, 25);
         Complex[] input = new Complex[n];
         for (int i = 0; i < n; i++) {
             input[i] = new Complex(i, 0);
@@ -26,5 +26,11 @@ class FFT_Test {
         Complex[] sequential_output = FFT_Sequential.FFT(input);
         endTime = System.currentTimeMillis();
         System.out.println("Total sequential execution time: " + (endTime - startTime));
+
+        for(int i = 0; i < n; i++){
+            if(!parallel_output[i].equals(sequential_output[i])){
+                System.out.println("Difference between parallel and sequential");
+            }
+        }
     } 
 }

@@ -1,8 +1,5 @@
-import java.util.Random;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 
@@ -28,14 +25,25 @@ class FFT_Parallel implements Callable<Complex[]> {
         for(int k = 0; k < N/2; k++) {
             even[k] = x[2*k];
         }
-        
-        Future<Complex[]> evenF = threadPool.submit(new FFT_Parallel(even));
+
         for(int k = 0; k < N/2; k++) {
             odd[k] = x[2*k + 1];
         }
-        Future<Complex[]> oddF = threadPool.submit(new FFT_Parallel(odd));
-        Complex[] q = evenF.get();
-        Complex[] r = oddF.get();
+
+        Complex[] q;
+        Complex[] r;
+        Future<Complex[]> evenF;
+        Future<Complex[]> oddF;
+
+        if(N > Math.pow(2, 20)){
+            evenF = threadPool.submit(new FFT_Parallel(even));
+            oddF = threadPool.submit(new FFT_Parallel(odd));
+            q = evenF.get();
+            r = oddF.get();
+        } else {
+            q = FFT_Sequential.FFT(even);
+            r = FFT_Sequential.FFT(odd);
+        }
 
 
         Complex[] y = new Complex[N];
@@ -46,26 +54,5 @@ class FFT_Parallel implements Callable<Complex[]> {
             y[k + N/2] = q[k].minus(wk.times(r[k]));
         }
         return y;
-    }
-    
-    public static void main(String[] args) throws InterruptedException, ExecutionException{
-        Random ran = new Random();
-        int n = (int) Math.pow(2, 12);
-        Complex[] input = new Complex[n];
-        for (int i = 0; i <n; i++) {
-            input[i] = new Complex(i, 0);
-            input[i] = new Complex(ran.nextInt(10), 0);
-        }
-        ExecutorService es = Executors.newSingleThreadExecutor();
-        final long startTime = System.currentTimeMillis();
-        Future<Complex[]> output = es.submit(new FFT_Parallel(input));
-        final long endTime = System.currentTimeMillis();
-        System.out.println("Total execution time: " + (endTime - startTime));
-
-        //System.out.println(Arrays.toString(output.get()));
-        es.shutdown();
-        FFT_Parallel.threadPool.shutdown();
-
-       // System.out.println(output.get());
     }
 }

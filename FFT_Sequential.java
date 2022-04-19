@@ -1,5 +1,3 @@
-import java.util.Random;
-
 class FFT_Sequential {
     
     public static Complex[] FFT(Complex[] x) throws Exception {
@@ -28,20 +26,5 @@ class FFT_Sequential {
             y[k + N/2] = q[k].minus(wk.times(r[k]));
         }
         return y;
-    }
-    
-    public static void main(String[] args) throws Exception{
-        Random ran = new Random();
-        int n = (int) Math.pow(2, 12);
-        Complex[] input = new Complex[n];
-        for (int i = 0; i <n; i++) {
-            input[i] = new Complex(i, 0);
-            input[i] = new Complex(ran.nextInt(10), 0);
-        }
-        final long startTime = System.currentTimeMillis();
-        Complex[] output = FFT(input);
-        final long endTime = System.currentTimeMillis();
-        System.out.println("Total execution time: " + (endTime - startTime));
-        //System.out.println(Arrays.toString(output));
     }
 }
