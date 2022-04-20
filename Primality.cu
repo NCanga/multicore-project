@@ -2,6 +2,7 @@
 #include <string>
 #include <cmath>
 #include <chrono>
+#include <assert.h>
 
 using namespace std;
 #define THREADS_PER_BLOCK 128
