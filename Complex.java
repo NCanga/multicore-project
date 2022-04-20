@@ -1,6 +1,6 @@
 public class Complex {
-    private final double re;   // the real part
-    private final double im;   // the imaginary part
+    private final double re;   
+    private final double im;  
 
     // create a new object with the given real and imaginary parts
     public Complex(double real, double imag) {
@@ -54,7 +54,7 @@ public class Complex {
         Complex sum = new Complex(real, imag);
         return sum;
     }
-    
+
     public boolean equals(Object x) {
         if (x == null) return false;
         if (this.getClass() != x.getClass()) return false;
