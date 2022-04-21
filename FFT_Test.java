@@ -1,3 +1,4 @@
+import java.io.PrintWriter;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -32,6 +33,22 @@ class FFT_Test {
         Complex[] sequential_output = FFT_Sequential.FFT(input);
         endTime = System.currentTimeMillis();
         System.out.println("Total sequential execution time: " + (endTime - startTime));
+
+        try
+        {
+            PrintWriter pr = new PrintWriter("fft_out.txt");    
+        
+            for (int i=0; i<n; i++)
+            {
+                pr.println(parallel_output[i]);
+            }
+            pr.close();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            System.out.println("No such file exists.");
+        }
 
         for(int i = 0; i < n; i++){
             if(!parallel_output[i].equals(sequential_output[i])){
