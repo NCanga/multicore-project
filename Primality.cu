@@ -9,9 +9,12 @@ using namespace std;
 
 __global__ void parallelPrimality(int *number, bool* result) {
     int i = blockIdx.x * THREADS_PER_BLOCK + threadIdx.x + 2;
-    if ((i*i <= *number) && (*number % i) == 0) {
-        *result = false;
-    }
+    if ((i*i) <= *number) {
+		//atomicAdd(total, 1);
+		if ((*number % i) == 0) {
+			atomicExch((int *) result, (int) false);
+    	} 
+	}
 }
 
 bool sequentialPrimality(int num) {
@@ -64,31 +67,34 @@ int main(int argc, char *argv[]) {
 	    cudaMalloc((void**) &d_input, sizeof(int));
 	    cudaMalloc((void**) &d_result, sizeof(bool));
 
+
 	    cudaMemcpy(d_input, &input, sizeof(int), cudaMemcpyHostToDevice);
 	    cudaMemcpy(d_result, &result, sizeof(bool), cudaMemcpyHostToDevice);
 
 	    t1 = high_resolution_clock::now();
-	    parallelPrimality<<<numBlocks, THREADS_PER_BLOCK>>>(d_input, d_result);
+	    parallelPrimality<<<numBlocks, THREADS_PER_BLOCK>>>(d_input, d_result); 
+		cudaDeviceSynchronize();
 	    t2 = high_resolution_clock::now();
 	    ms_int = duration_cast<microseconds>(t2 - t1);
-	 
 
 	    cudaMemcpy(&result, d_result, sizeof(bool), cudaMemcpyDeviceToHost);
-            if (j != 0) {
+	 
+        if (j != 0) {
 		    if(result){
 			cout << "Parallel Result: Prime" << endl;
 		    } else {
 			cout << "Parallel Result: Not Prime" << endl;
 		    }
 	    }
-            if (j != 0) {
-	    	std::cout << "Execution Time: " << ms_int.count() << " microsecondss\n";
-	    	std::cout << endl;
+        if (j != 0) {
+	    	std::cout << "Execution Time: " << ms_int.count() << " microseconds\n";
+			std::cout << endl;
 	    }
 	    cudaFree(d_input);
 	    cudaFree(d_result);
 
 	}
+	
     // NOT prime numbers
     cout << "*****NOT Prime Testing*****" << endl;
     int not_primes[8] = {100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000};
@@ -123,10 +129,10 @@ int main(int argc, char *argv[]) {
 	    cudaMemcpy(d_result, &result, sizeof(bool), cudaMemcpyHostToDevice);
 
 	    t1 = high_resolution_clock::now();
-	    parallelPrimality<<<numBlocks, THREADS_PER_BLOCK>>>(d_input, d_result);
+	    parallelPrimality<<<numBlocks, THREADS_PER_BLOCK>>>(d_input, d_result); 
+	    cudaDeviceSynchronize();
 	    t2 = high_resolution_clock::now();
 	    ms_int = duration_cast<microseconds>(t2 - t1);
-	 
 
 	    cudaMemcpy(&result, d_result, sizeof(bool), cudaMemcpyDeviceToHost);
 
@@ -135,10 +141,11 @@ int main(int argc, char *argv[]) {
 	    } else {
 		cout << "Parallel Result: Not Prime" << endl;
 	    }
-	    std::cout << "Execution Time: " << ms_int.count() << " microsecondss\n";
+	    std::cout << "Execution Time: " << ms_int.count() << " microseconds\n";
 	    std::cout << endl;
 	    cudaFree(d_input);
 	    cudaFree(d_result);
 
 	}
+	
 }
