@@ -7,16 +7,15 @@ import java.util.concurrent.Future;
 class FFT_Test {
     public static void main(String[] args) throws Exception{
         Random ran = new Random();
-        int n = (int) Math.pow(2, 23);
+        int n = (int) Math.pow(2, 25);
         Complex[] input = new Complex[n];
         for (int i = 0; i < n; i++) {
             input[i] = new Complex(i, 0);
-            input[i] = new Complex(ran.nextInt(10), 0);
+            input[i] = new Complex(ran.nextInt(2), 0);
         }
 
         ExecutorService es = Executors.newSingleThreadExecutor();
         FFT_Parallel.threadPool = Executors.newCachedThreadPool();
-        FFT_Parallel.sequentialN = 20;
 
         //Parallel FFT
         long startTime = System.currentTimeMillis();

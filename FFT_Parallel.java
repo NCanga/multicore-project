@@ -1,15 +1,17 @@
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-
+import java.util.concurrent.atomic.AtomicInteger;
 
 class FFT_Parallel implements Callable<Complex[]> {
 
     public static ExecutorService threadPool;
     public static int sequentialN;
+    public static volatile AtomicInteger remainingCores = new AtomicInteger(Runtime.getRuntime().availableProcessors() / 2);
 
     Complex[] x;
     int N;
+    int cores;
 
     public FFT_Parallel(Complex[] x) {
         this.x = x;
@@ -36,7 +38,7 @@ class FFT_Parallel implements Callable<Complex[]> {
         Future<Complex[]> evenF;
         Future<Complex[]> oddF;
 
-        if(N > Math.pow(2, sequentialN)){
+        if(remainingCores.decrementAndGet() > 0){
             evenF = threadPool.submit(new FFT_Parallel(even));
             oddF = threadPool.submit(new FFT_Parallel(odd));
             q = evenF.get();
@@ -44,7 +46,7 @@ class FFT_Parallel implements Callable<Complex[]> {
         } else {
             q = FFT_Sequential.FFT(even);
             r = FFT_Sequential.FFT(odd);
-        }
+        } 
 
 
         Complex[] y = new Complex[N];
